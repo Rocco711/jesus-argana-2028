@@ -1121,16 +1121,10 @@ footer .pend{font-size:14px;color:rgba(255,255,255,.42);border-bottom:1px dashed
           </div>
         </div>
 
-        <div class="form-acciones-grid">
-          <button type="submit" name="via" value="whatsapp" class="btn btn-primario btn-wa-submit">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
-            Sumarme vía WhatsApp
-          </button>
-          <button type="submit" name="via" value="correo" class="btn btn-mail-submit">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            Enviar por Correo
-          </button>
-        </div>
+        <button type="submit" class="btn btn-primario btn-wa-submit" style="width:100%;margin-top:18px;">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="width:20px;height:20px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2z"/></svg>
+          Sumarme vía WhatsApp
+        </button>
         <p class="nota">Al enviar aceptás ser contactado por el equipo de campaña. Nunca compartimos tus datos.</p>
         <div class="ok-msg" id="okMsg">Gracias. Se abrió tu correo con el mensaje listo para enviar.</div>
       </form>
@@ -1376,16 +1370,9 @@ const observador = new IntersectionObserver(entradas => {
 }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
 document.querySelectorAll(".revelar").forEach(el => observador.observe(el));
 
-/* ---------- Formulario Resiliente (WhatsApp / Email) ---------- */
-let botonPresionado = "whatsapp";
+/* ---------- Formulario WhatsApp Exclusivo ---------- */
 const formSumate = document.getElementById("formSumate");
 if (formSumate) {
-  formSumate.querySelectorAll("button[type=submit]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      botonPresionado = btn.value || "whatsapp";
-    });
-  });
-
   formSumate.addEventListener("submit", e => {
     e.preventDefault();
     const f = e.target;
@@ -1399,45 +1386,26 @@ if (formSumate) {
     const nombreComp = (f.nombre.value.trim() + " " + f.apellido.value.trim()).trim();
     const okMsg = document.getElementById("okMsg");
 
-    if (botonPresionado === "whatsapp") {
-      const msgWa = [
-        "🇵🇾 *¡Quiero sumarme a la campaña " + CONFIG.candidato + " " + (CONFIG.cargo || "2028") + "!*",
-        "",
-        "• *Nombre y Apellido:* " + nombreComp,
-        "• *Correo:* " + (f.correo.value.trim() || "No especificado"),
-        "• *Teléfono:* " + (f.telefono.value.trim() || "No especificado"),
-        "• *Ciudad o Barrio:* " + (f.barrio.value.trim() || "No especificado"),
-        "• *Área de apoyo:* " + f.ayuda.value,
-        f.mensaje.value.trim() ? ("• *Mensaje:* " + f.mensaje.value.trim()) : ""
-      ].filter(Boolean).join("\n");
+    const msgWa = [
+      "🇵🇾 *¡Quiero sumarme a la campaña " + CONFIG.candidato + " " + (CONFIG.cargo || "2028") + "!*",
+      "",
+      "• *Nombre y Apellido:* " + nombreComp,
+      "• *Correo:* " + (f.correo.value.trim() || "No especificado"),
+      "• *Teléfono:* " + (f.telefono.value.trim() || "No especificado"),
+      "• *Ciudad o Barrio:* " + (f.barrio.value.trim() || "No especificado"),
+      "• *Área de apoyo:* " + f.ayuda.value,
+      f.mensaje.value.trim() ? ("• *Mensaje:* " + f.mensaje.value.trim()) : ""
+    ].filter(Boolean).join("\n");
 
-      const waNum = (CONFIG.whatsapp || "").replace(/\D/g, "");
-      const waUrl = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(msgWa);
-      window.open(waUrl, "_blank");
+    const waNum = (CONFIG.whatsapp || "").replace(/\D/g, "");
+    const waUrl = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(msgWa);
+    window.open(waUrl, "_blank");
 
+    if (okMsg) {
       okMsg.textContent = "¡Muchas gracias! Se abrió WhatsApp para enviar tus datos directamente al equipo.";
       okMsg.classList.add("visible");
-      f.reset();
-    } else {
-      const cuerpo = [
-        "Nombre: " + f.nombre.value.trim(),
-        "Apellido: " + f.apellido.value.trim(),
-        "Correo: " + f.correo.value.trim(),
-        "Teléfono: " + f.telefono.value.trim(),
-        "Ciudad o barrio: " + f.barrio.value.trim(),
-        "Quiere ayudar en: " + f.ayuda.value,
-        "",
-        "Mensaje: " + f.mensaje.value.trim()
-      ].join("\n");
-
-      window.location.href = "mailto:" + CONFIG.correo +
-        "?subject=" + encodeURIComponent("Quiero sumarme a la campaña · " + nombreComp) +
-        "&body=" + encodeURIComponent(cuerpo);
-
-      okMsg.textContent = "Gracias. Se abrió tu correo con el mensaje listo para enviar.";
-      okMsg.classList.add("visible");
-      f.reset();
     }
+    f.reset();
   });
 }
 
