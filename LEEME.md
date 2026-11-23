@@ -47,7 +47,7 @@ const CONFIG = {
   anio:      2028,
   url:       "https://ejemplo.com.py/",       // donde vas a publicar
   correo:    "contacto@ejemplo.com.py",
-  whatsapp:  "595900000000",                 // código de país + número, sin + ni espacios
+  whatsapp:  "595981423840",                 // código de país + número, sin + ni espacios
   redes: {
     instagram: "https://instagram.com/",
     facebook:  "https://facebook.com/",
